@@ -1,0 +1,107 @@
+<html><head><script
+  src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+  crossorigin="anonymous"></script>
+  <script
+  src="https://code.jquery.com/color/jquery.color-2.1.2.min.js"
+  integrity="sha256-H28SdxWrZ387Ldn0qogCzFiUDDxfPiNIyJX7BECQkDE="
+  crossorigin="anonymous"></script>
+  <script src="https://dl.dropboxusercontent.com/u/1622255/livemockup/rgbaster.min.js" crossorigin="anonymous"></script>
+  <link charset="utf-8" rel="stylesheet" type="text/css"  href="front.css"/>
+  <body>
+
+<div class="top-text"><h1 contenteditable="true">Text goes here</h1></div>
+
+    <div id="bgholder">
+      <div class="screenshot">
+        <div class="holder">
+          <img class="topbar" src="https://dl.dropboxusercontent.com/u/1622255/livemockup/topbar.png">
+          <img id="banner" class="banner" src="https://dl.dropboxusercontent.com/u/1622255/Eventfuel_on_iPad_iPhone_and_Apple_Watch.jpg">
+          <img class="datebar" src="https://dl.dropboxusercontent.com/u/1622255/livemockup/datebar.png">
+          <img class="agenda" src="https://dl.dropboxusercontent.com/u/1622255/livemockup/agenda.png">
+          <div class="footer" style="background-color: white">
+            <img class="bottombar" src="https://dl.dropboxusercontent.com/u/1622255/livemockup/bottombar.png">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="img-upload">
+      <label>Image File:</label><br/>
+      <input type="file" id="imageLoader" name="imageLoader"/>
+      <canvas id="imageCanvas"></canvas>
+    </div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $("#banner-input").on("input", function(){
+    var s = $("#banner-input").val();
+    $("#banner").attr("src", s);
+    RGBaster.colors(s, {
+      success: function(payload) {
+        // You now have the payload.
+        console.log(payload.dominant);
+        console.log(payload.secondary);
+        console.log(payload.palette);
+        var h = $.Color(payload.secondary).hsla()[0];
+        var s = $.Color(payload.secondary).hsla()[1];
+        var v = 0.333333;
+        var hex = $.Color("#ff0000").hue(h).saturation(s).lightness(v).toHexString();
+        $('.screenshot .holder, .holder .bottombar').css('background-color', hex);
+      }
+    });
+  });
+});
+
+var imageLoader = document.getElementById('imageLoader');
+var canvas = document.getElementById('imageCanvas');
+var ctx = canvas.getContext('2d');
+var reader = new FileReader();
+
+reader.onload = function(event){
+  var img = new Image();
+  img.onload = function(){
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img,0,0);
+      // put canvas content as Base64 encoding in the banner image
+      var b64 = canvas.toDataURL();
+      $("#banner").attr("src", b64);
+      // pick out best colour and put as tint color in the app
+      var s = img;
+      RGBaster.colors(s, {
+        success: function(payload) {
+          // You now have the payload.
+          console.log(payload.dominant);
+          console.log(payload.secondary);
+          var h = $.Color(payload.secondary).hsla()[0];
+          var s = $.Color(payload.secondary).hsla()[1];
+          var v = 0.333333;
+          var hex = $.Color("#ff0000").hue(h).saturation(s).lightness(v).toHexString();
+          $('.screenshot .holder, .holder .bottombar').css('background-color', hex);
+        }
+      });
+  }
+  img.src = event.target.result;
+}
+
+
+$("body").on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  })
+  .on('dragover dragenter', function() {
+    $("#bgholder").addClass('is-dragover');
+  })
+  .on('dragleave dragend drop', function() {
+    $("#bgholder").removeClass('is-dragover');
+  })
+  .on('drop', function(e) {
+    droppedFiles = e.originalEvent.dataTransfer.files;
+    reader.readAsDataURL(droppedFiles[0]);
+  });
+
+
+  </script>
+
+  </body></html>
