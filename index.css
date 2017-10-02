@@ -21,7 +21,7 @@ h1 {
 }
 
 #bgholder {
-  background-image: url("https://dl.dropboxusercontent.com/u/1622255/livemockup/bg.png");
+  background-image: url("bg.png");
   height: 1000px;
   width: 1000px;
   background-size: contain;
